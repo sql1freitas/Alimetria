@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from core.views import register_meal
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('registro/', register_meal, name='register_meal'),
 ]
