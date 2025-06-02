@@ -3,73 +3,202 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
   <title>Registro de Refeição</title>
 
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.4.0/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-    integrity="sha384-..."
-    crossorigin="anonymous"
-  >
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
+    /* ===========================
+       Variáveis de Tema
+    ============================ */
+    :root {
+      --clr-primary: #5B8DEF;
+      --clr-primary-hover: #4678d1;
+      --clr-bg: #f0f4f8;
+      --clr-surface: #ffffff;
+      --clr-text: #333333;
+      --clr-text-light: #555555;
+      --radius: 1rem;
+      --shadow: 0 4px 24px rgba(0,0,0,0.05);
+      --transition: 0.3s ease;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --clr-bg: #121518;
+        --clr-surface: #1f2124;
+        --clr-text: #e0e0e0;
+        --clr-text-light: #a0a0a0;
+        --shadow: 0 4px 24px rgba(0,0,0,0.7);
+      }
+    }
+
+    /* ===========================
+       Reset e Tipografia
+    ============================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      background-color: #f8f9fa;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--clr-bg);
+      color: var(--clr-text);
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+      line-height: 1.5;
     }
-    .container {
-      max-width: 400px;
-      margin-top: 60px;
-      padding: 20px;
-      background: #ffffff;
-      border-radius: .5rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .btn-register {
+    
+    /* ===========================
+       Card Principal
+    ============================ */
+    .meal-card {
+      background: var(--clr-surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      max-width: 360px;
       width: 100%;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Header com gradiente sutil */
+    .meal-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, var(--clr-primary), var(--clr-primary-hover));
+    }
+
+    .meal-card h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+      color: var(--clr-primary);
+    }
+
+    /* ===========================
+       Form e Inputs
+    ============================ */
+    .meal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .meal-form label {
+      font-weight: 600;
+      color: var(--clr-text-light);
+    }
+
+    .meal-form input {
+      padding: 0.75rem 1rem;
+      border: 2px solid #ddd;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .meal-form input:focus {
+      border-color: var(--clr-primary);
+      box-shadow: 0 0 0 4px rgba(91, 141, 239, 0.2);
+      outline: none;
+    }
+
+    /* ===========================
+       Botão
+    ============================ */
+    .meal-form button {
+      padding: 0.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      background-color: var(--clr-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background-color var(--transition), transform var(--transition);
+    }
+
+    .meal-form button:hover {
+      background-color: var(--clr-primary-hover);
+      transform: translateY(-2px);
+    }
+
+    /* ===========================
+       Mensagens de Feedback
+    ============================ */
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .alert-success { background-color: #e6f4ea; color: #2e7d32; }
+    .alert-warning { background-color: #fff8e1; color: #8a6d3b; }
+    .alert-danger  { background-color: #fcebea; color: #c53030; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===========================
+       Responsividade
+    ============================ */
+    @media (max-width: 400px) {
+      .meal-card {
+        padding: 1.5rem 1rem;
+      }
+
+      .meal-form input,
+      .meal-form button {
+        font-size: 0.95rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h3 class="text-center mb-4">Registro de Refeição</h3>
 
-    
+  <div class="meal-card">
+    <h2>🧑‍🍳 Registro de Refeição</h2>
+
+    <!-- Mensagens do Django -->
     {% if messages %}
       {% for msg in messages %}
-        <div
-          class="alert 
-                 {% if msg.tags == 'error' %}alert-danger{% elif msg.tags == 'warning' %}alert-warning{% else %}alert-success{% endif %}"
-          role="alert"
-        >
+        <div class="alert alert-{{ msg.tags }}">
           {{ msg }}
         </div>
       {% endfor %}
     {% endif %}
 
-   
-    <form method="post" action="">
+    <!-- Formulário -->
+    <form method="post" class="meal-form">
       {% csrf_token %}
-      <div class="mb-3">
-        <label for="registration_id" class="form-label">Matrícula</label>
-        <input
-          type="text"
-          class="form-control"
-          id="registration_id"
-          name="registration_id"
-          placeholder="Digite sua matrícula"
-          required
-        >
-      </div>
-      <button type="submit" class="btn btn-primary btn-register">
-        Registrar Refeição
-      </button>
+      <label for="registration_id">Matrícula</label>
+      <input
+        type="text"
+        id="registration_id"
+        name="registration_id"
+        placeholder="Digite sua matrícula"
+        required
+      >
+      <button type="submit">Registrar Refeição</button>
     </form>
   </div>
 
-
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.4.0/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-..."
-    crossorigin="anonymous"
-  ></script>
 </body>
 </html>
